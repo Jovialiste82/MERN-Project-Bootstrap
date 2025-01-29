@@ -31,7 +31,6 @@ DIRECTORIES=(
   "workers"
 )
 
-
 echo "Creating directories..."
 # Create directories
 mkdir -p "${DIRECTORIES[@]}"
@@ -63,30 +62,29 @@ mkdir docker
 touch .env.development .env.staging .env.production .env.example
 cd ..
 
-# Dynamic README.md creation using templates
-echo "Copying README.md files from templates..."
+# Dynamic GUIDELINES.md creation using templates
+echo "Copying markdown files from templates..."
 
-# Function to copy README from templates
-copy_readme() {
+# Function to copy markdown files from templates
+copy_guidelines() {
   local dir_name="$1"
   local template_file="templates/${dir_name}_README.md"
   local target_file=""
 
-    # Skip copying root README.md
+  # Skip copying root README.md (to prevent overwriting the main README)
   if [ "$dir_name" == "root" ]; then
     echo "Skipping root README.md to prevent overwriting."
     return
   fi
 
-   target_file="${dir_name}/README.md"
-
-
+  # Change README.md to GUIDELINES.md in subdirectories
+  target_file="${dir_name}/GUIDELINES.md"
 
   if [ -f "$template_file" ]; then
     cp "$template_file" "$target_file"
     echo "Copied $template_file to $target_file"
   else
-    echo "Warning: Template file $template_file not found. Skipping README for $dir_name."
+    echo "Warning: Template file $template_file not found. Skipping markdown file for $dir_name."
   fi
 }
 
@@ -95,8 +93,8 @@ for template in templates/*_README.md; do
   # Extract the directory name by removing the suffix '_README.md'
   dir_name=$(basename "$template" "_README.md")
   
-  # Call the copy_readme function
-  copy_readme "$dir_name"
+  # Call the function to rename README.md to GUIDELINES.md
+  copy_guidelines "$dir_name"
 done
 
 echo "Creating .gitignore..."
